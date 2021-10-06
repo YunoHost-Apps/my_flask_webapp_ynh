@@ -1,0 +1,5 @@
+SECRET_KEY=__SECRET_KEY__
+FLASK_APP=app:create_app
+FLASK_ENV=production
+DB_URI=__DB_URI__
+ADMIN_ROUTE=__ADMIN_ROUTE__

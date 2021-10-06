@@ -7,7 +7,8 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-ExecStart=__FINALPATH__/script
+Environment="PATH=__FINALPATH__/venv/bin"
+ExecStart=__FINALPATH__/venv/bin/gunicorn -e SCRIPT_NAME=__PATH__ --worker-class eventlet --bind 127.0.0.1:__PORT__ "app:create_app()"
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 
