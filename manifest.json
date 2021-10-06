@@ -1,12 +1,12 @@
 {
-    "name": "Example app",
-    "id": "example",
+    "name": "Flask Git",
+    "id": "flask_git",
     "packaging_format": 1,
     "description": {
-        "en": "Explain in *a few (10~15) words* the purpose of the app or what it actually does (it is meant to give a rough idea to users browsing a catalog of 100+ apps)",
-        "fr": "Expliquez en *quelques* (10~15) mots l'utilité de l'app ou ce qu'elle fait (l'objectif est de donner une idée grossière pour des utilisateurs qui naviguent dans un catalogue de 100+ apps)"
+        "en": "Easily install and manage a Flask app from a git repository.",
+        "fr": "Installez et gérez facilement une app Flask depuis un répertoire git."
     },
-    "version": "1.0~ynh1",
+    "version": "0.1~ynh1",
     "url": "https://example.com",
     "upstream": {
         "license": "free",
@@ -26,9 +26,7 @@
     },
     "multi_instance": true,
     "services": [
-        "nginx",
-        "php7.3-fpm",
-        "mysql"
+        "nginx"
     ],
     "arguments": {
         "install" : [
@@ -39,8 +37,8 @@
             {
                 "name": "path",
                 "type": "path",
-                "example": "/example",
-                "default": "/example"
+                "example": "/flaskapp",
+                "default": "/flaskapp"
             },
             {
                 "name": "admin",
@@ -52,21 +50,48 @@
                 "default": true
             },
             {
-                "name": "language",
-                "type": "string",
+                "name": "git_url",
                 "ask": {
-                    "en": "Choose the application language",
-                    "fr": "Choisissez la langue de l'application"
+                  "en": "Custom app git repository URL",
+                  "fr": "URL du répertoire git de l'app personnalisée"
                 },
-                "choices": ["fr", "en"],
-                "default": "fr"
+                "example": "https://domain.tld/path/to/app",
+                "pattern": {
+                  "regexp": "^https:\\/\\/[a-zA-Z0-9-_.]+\\/[a-zA-Z0-9-_./]+\\/[a-zA-Z0-9-_.]+(\\/?(-\\/)?tree\\/[a-zA-Z0-9-_]+)?(\\.git)?\\/?$",
+                  "error": {
+                    "en": "App repository URLs are expected to look like <code>https://domain.tld/path/to/app</code>",
+                    "fr": "Les URL de répertoire git doivent ressembler à <code>https://domaine.tld/chemin/vers/app</code>"
+                  }
+                },
+                "help": {
+                  "en": "Must be a valid git repository.",
+                  "fr": "Doit être un lien valide vers un répertoire git."
+                }
             },
             {
-                "name": "password",
-                "type": "password",
+                "name": "database",
+                "ask": {
+                  "en": "Choose the database system to use",
+                  "fr": "Choississez un système de base de données."
+                },
+                "default": "postgresql",
+                "type": "select",
+                "choices": {
+                    "none": "None",
+                    "postgresql": "PostgreSQL"
+                }
+            },
+            {
+                "name": "admin_route",
+                "type": "path",
+                "ask": {
+                  "en": "Add an sso protected route",
+                  "fr": "Définir une route protégée par le sso."
+                },
+                "example": "/myadmin",
                 "help": {
-                    "en": "Use the help field to add an information for the admin about this question.",
-                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+                  "en": "Consider using a less common route than `/admin`.",
+                  "fr": "Préférez utiliser une route moins commune que `/admin`"
                 }
             }
         ]
