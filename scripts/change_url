@@ -28,11 +28,9 @@ ynh_script_progression --message="Loading installation settings..." --time --wei
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-
-# Add settings here as needed by your application
-#db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#db_user=$db_name
-#db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+client_max_body_size=$(ynh_app_setting_get --app=$app --key=client_max_body_size)
+port=$(ynh_app_setting_get --app=$app --key=port)
+executable=$(ynh_app_setting_get --app=$app --key=executable)
 
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
@@ -93,6 +91,8 @@ then
 	path_url="$new_path"
 	# Create a dedicated NGINX config
 	ynh_add_nginx_config
+  # systemd config also needs to be updated with the `SCRIPT_NAME` environment variable
+  ynh_add_systemd_config
 fi
 
 # Change the domain for NGINX
