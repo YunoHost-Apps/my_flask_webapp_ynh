@@ -69,19 +69,6 @@
                 }
             },
             {
-                "name": "database",
-                "ask": {
-                  "en": "Choose the database system to use",
-                  "fr": "Choississez un système de base de données."
-                },
-                "default": "postgresql",
-                "type": "select",
-                "choices": {
-                    "none": "None",
-                    "postgresql": "PostgreSQL"
-                }
-            },
-            {
                 "name": "admin_route",
                 "type": "path",
                 "ask": {
