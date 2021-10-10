@@ -56,6 +56,7 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=secret_key --value=$secret_key
 ynh_app_setting_set --app=$app --key=git_url --value=$git_url
 ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 
@@ -117,6 +118,7 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 #=================================================
 # CREATE A DATABASE
 #=================================================
+db_uri=""
 if [ $db_type = "postgresql" ]; then
   ynh_script_progression --message="Creating a PostgreSQL database..." --time --weight=1
 
@@ -130,8 +132,14 @@ if [ $db_type = "postgresql" ]; then
   # Initialize database and store postgres password for upgrade
   ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 
-  db_uri=postgresql://$db_user:$db_pwd@localhost
+  db_uri="postgresql://$db_user:$db_pwd@localhost"
+elif [ $db_type = "sqlite" ]; then
+  ynh_script_progression --message="Defining a SQLite3 database..." --time --weight=1
+
+  db_uri="sqlite:///../instance/$app.sqlite"
 fi
+
+ynh_app_setting_set --app=$app --key=db_uri --value=$db_uri
 
 #=================================================
 # NGINX CONFIGURATION
