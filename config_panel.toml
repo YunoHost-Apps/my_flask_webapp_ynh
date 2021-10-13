@@ -1,0 +1,23 @@
+version = "1.0"
+
+[main]
+name = "Base config"
+
+    [main.config]
+    name = "Config"
+    services = ["__APP__"]
+
+        [main.config.admin_route]
+        type = "path"
+        ask.en = "Change the sso protected route"
+        ask.fr = "Changer la route protégée par le SSO"
+        help.en = "Consider using a less common route than `/admin`."
+        help.fr = "Préférez utiliser une route moins commune que `/admin`"
+
+        [main.config.workers]
+        type = "number"
+        bind = ":__FINALPATH__/gunicorn.conf.py"
+        optional = false
+        min = 1
+        ask.en = "Set workers count"
+        ask.fr = "Définir le nombre de *workers*"

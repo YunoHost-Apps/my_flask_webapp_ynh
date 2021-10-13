@@ -65,10 +65,10 @@ ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 #=================================================
 ynh_script_progression --message="Cloning the custom app repository..." --time --weight=1
 
-git clone --depth 1 "$git_url" "$final_path"
+git clone -q --depth 1 "$git_url" "$final_path"
 
 #=================================================
-# RETRIEVE AND STORE ARGUMENTS FROM THE REPO MANIFEST
+# RETRIEVE AND STORE ARGUMENTS FROM THE REPO ynh.json
 #=================================================
 ynh_script_progression --message="Retrieving and storing the custom app repository settings..." --time --weight=1
 
