@@ -72,17 +72,21 @@ git clone -q --depth 1 "$git_url" "$final_path"
 #=================================================
 ynh_script_progression --message="Retrieving and storing the custom app repository settings..." --time --weight=1
 
-executable=$(ynh_get_arg executable "app:create_app('app.config.ProdConfig')")
-db_type=$(ynh_get_arg db_type "")
-client_max_body_size=$(ynh_get_arg client_max_body_size '30M')
-migrations=$(ynh_get_arg migrations false)
+flask_path=$(ynh_get_arg flask_path "app")
+config_path=$(ynh_get_arg config_path "app.config.ProdConfig")
+db_type=$(ynh_get_arg db_type YNH_NULL)
+migrations=$(ynh_get_arg migrations 0)
+js_path=$(ynh_get_arg js_path YNH_NULL)
 workers=$(ynh_get_arg workers $(get_default_workers))
+client_max_body_size=$(ynh_get_arg client_max_body_size "30M")
 
-ynh_app_setting_set --app=$app --key=executable --value=$executable
+ynh_app_setting_set --app=$app --key=flask_path --value=$flask_path
+ynh_app_setting_set --app=$app --key=config_path --value=$config_path
 ynh_app_setting_set --app=$app --key=db_type --value=$db_type
-ynh_app_setting_set --app=$app --key=client_max_body_size --value=$client_max_body_size
 ynh_app_setting_set --app=$app --key=migrations --value=$migrations
+ynh_app_setting_set --app=$app --key=js_path --value=$js_path
 ynh_app_setting_set --app=$app --key=workers --value=$workers
+ynh_app_setting_set --app=$app --key=client_max_body_size --value=$client_max_body_size
 
 #=================================================
 # STANDARD MODIFICATIONS

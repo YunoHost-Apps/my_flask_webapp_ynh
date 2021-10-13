@@ -28,6 +28,8 @@ secret_key=$(ynh_app_setting_get --app=$app --key=secret_key)
 admin_route=$(ynh_app_setting_get --app=$app --key=admin_route)
 client_max_body_size=$(ynh_app_setting_get --app=$app --key=client_max_body_size)
 port=$(ynh_app_setting_get --app=$app --key=port)
+flask_path=$(ynh_app_setting_get --app=$app --key=flask_path)
+config_path=$(ynh_app_setting_get --app=$app --key=config_path)
 
 #=================================================
 # CHECK VERSION
