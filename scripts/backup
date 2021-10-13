@@ -80,7 +80,7 @@ ynh_backup --src_path="/etc/systemd/system/$app.service"
 # BACKUP VARIOUS FILES
 #=================================================
 
-ynh_backup --src_path="/var/log/$app/$app.log"
+ynh_backup --src_path="/var/log/$app"
 
 #=================================================
 # BACKUP THE PostgreSQL DATABASE
@@ -92,7 +92,6 @@ if [ $db_type = "postgresql" ]; then
   ### copy of the generated dump to the archive still happens later)
   ynh_psql_dump_db --database="$db_name" > db.sql
 fi
-
 
 #=================================================
 # END OF SCRIPT

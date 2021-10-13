@@ -114,9 +114,14 @@ ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
 #=================================================
 ynh_script_progression --message="Updating the .env file..." --time --weight=1
 
-ynh_add_config --template="env" --destination="$final_path/.env"
-chmod 400 "$final_path/.env"
-chown $app:$app "$final_path/.env"
+add_env_config
+
+#=================================================
+# UPDATE THE GUNICORN CONFIG FILE
+#=================================================
+ynh_script_progression --message="Updating the Gunicorn config file..." --time --weight=1
+
+add_gunicorn_config
 
 #=================================================
 # SETUP SYSTEMD
@@ -134,14 +139,14 @@ ynh_add_systemd_config
 ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
 
 # Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append
+ynh_use_logrotate --specific_user="$app" --non-append
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="A short description of the app" --log="/var/log/$app"
 
 #=================================================
 # START SYSTEMD SERVICE

@@ -3,12 +3,13 @@ Description=Small description of the service
 After=network.target
 
 [Service]
-Type=simple
+PIDFile=/run/gunicorn/__APP__-pid
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-Environment="PATH=__FINALPATH__/venv/bin"
-ExecStart=__FINALPATH__/venv/bin/gunicorn -e SCRIPT_NAME=__PATH__ --worker-class eventlet --bind 127.0.0.1:__PORT__ "__EXECUTABLE__"
+ExecStart=__FINALPATH__/venv/bin/gunicorn -c __FINALPATH__/gunicorn.conf.py "__EXECUTABLE__"
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 
@@ -17,7 +18,7 @@ StandardError=inherit
 # # .. but this should be a good baseline
 # # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 # NoNewPrivileges=yes
-# PrivateTmp=yes
+PrivateTmp=yes
 # PrivateDevices=yes
 # RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 # RestrictNamespaces=yes

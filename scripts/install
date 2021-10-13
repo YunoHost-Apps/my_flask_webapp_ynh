@@ -76,11 +76,13 @@ executable=$(ynh_get_arg executable "app:create_app('app.config.ProdConfig')")
 db_type=$(ynh_get_arg db_type "")
 client_max_body_size=$(ynh_get_arg client_max_body_size '30M')
 migrations=$(ynh_get_arg migrations false)
+workers=$(ynh_get_arg workers $(get_default_workers))
 
 ynh_app_setting_set --app=$app --key=executable --value=$executable
 ynh_app_setting_set --app=$app --key=db_type --value=$db_type
 ynh_app_setting_set --app=$app --key=client_max_body_size --value=$client_max_body_size
 ynh_app_setting_set --app=$app --key=migrations --value=$migrations
+ynh_app_setting_set --app=$app --key=workers --value=$workers
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -152,7 +154,7 @@ ynh_add_nginx_config
 #=================================================
 # PIP INSTALLATION
 #=================================================
-ynh_script_progression --message="Install the custom app via pip..." --weight=80
+ynh_script_progression --message="Install python dependencies..." --weight=80
 
 python3 -m venv "${final_path}/venv"
 
@@ -172,6 +174,7 @@ chown -R $app:www-data "$final_path"
   if [ $db_type = "postgresql" ]; then
     ynh_exec_as $app $final_path/venv/bin/pip install psycopg2
   fi
+  # FIXME there is a bug with eventlet > 0.30.2 currently
   ynh_exec_as $app $final_path/venv/bin/pip install gunicorn eventlet==0.30.2
 )
 
@@ -181,9 +184,14 @@ chown -R $app:www-data "$final_path"
 ynh_script_progression --message="Adding a .env file..." --time --weight=1
 
 # Add .env file that can be used by the flask app config
-ynh_add_config --template="env" --destination="$final_path/.env"
-chmod 400 "$final_path/.env"
-chown $app:$app "$final_path/.env"
+add_env_config
+
+#=================================================
+# ADD A GUNICORN CONFIG FILE
+#=================================================
+ynh_script_progression --message="Adding a Gunicorn config file..." --time --weight=1
+
+add_gunicorn_config
 
 #=================================================
 # SETUP SYSTEMD
@@ -201,23 +209,14 @@ ynh_add_systemd_config
 ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate
+ynh_use_logrotate --specific_user="$app"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-### `yunohost service add` integrates a service in YunoHost. It then gets
-### displayed in the admin interface and through the others `yunohost service` commands.
-### (N.B.: this line only makes sense if the app adds a service to the system!)
-### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
-###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
-###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
-
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="A short description of the app" --log="/var/log/$app"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -226,6 +225,9 @@ ynh_script_progression --message="Starting a systemd service..." --time --weight
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
+chmod -R o-rwx /var/log/$app
+chown -R $app:$app /var/log/$app
 
 # Initialize database
 if [[ $db_type != "" ]]; then

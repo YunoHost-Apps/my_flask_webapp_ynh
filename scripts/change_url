@@ -31,6 +31,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 client_max_body_size=$(ynh_app_setting_get --app=$app --key=client_max_body_size)
 port=$(ynh_app_setting_get --app=$app --key=port)
 executable=$(ynh_app_setting_get --app=$app --key=executable)
+workers=$(ynh_app_setting_get --app=$app --key=workers)
 
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
@@ -91,8 +92,8 @@ then
 	path_url="$new_path"
 	# Create a dedicated NGINX config
 	ynh_add_nginx_config
-  # systemd config also needs to be updated with the `SCRIPT_NAME` environment variable
-  ynh_add_systemd_config
+  # Recreate gunicorn conf with new path
+  add_gunicorn_config
 fi
 
 # Change the domain for NGINX
