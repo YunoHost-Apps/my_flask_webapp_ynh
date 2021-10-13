@@ -224,7 +224,7 @@ yunohost service add $app --description="A short description of the app" --log="
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+service_action start
 
 chmod -R o-rwx /var/log/$app
 chown -R $app:$app /var/log/$app

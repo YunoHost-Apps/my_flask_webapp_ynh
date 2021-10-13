@@ -34,6 +34,10 @@ add_gunicorn_config () {
     chown $app:$app "$final_path/gunicorn.conf.py"
 }
 
+service_action () {
+  ynh_systemd_action --service_name=$app --action=$1 --log_path="/var/log/$app/$app.log"
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================
