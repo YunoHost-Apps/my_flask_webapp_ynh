@@ -74,10 +74,10 @@ ynh_script_progression --message="Retrieving and storing the custom app reposito
 
 flask_path=$(ynh_get_arg flask_path "app")
 config_path=$(ynh_get_arg config_path "app.config.ProdConfig")
-db_type=$(ynh_get_arg db_type YNH_NULL)
+db_type=$(ynh_get_arg db_type null)
 migrations=$(ynh_get_arg migrations 0)
-js_path=$(ynh_get_arg js_path YNH_NULL)
-workers=$(ynh_get_arg workers $(get_default_workers))
+js_path=$(ynh_get_arg js_path null)
+workers=$(ynh_get_arg workers 3)
 client_max_body_size=$(ynh_get_arg client_max_body_size "30M")
 
 ynh_app_setting_set --app=$app --key=flask_path --value=$flask_path
@@ -146,6 +146,21 @@ elif [ $db_type = "sqlite" ]; then
 fi
 
 ynh_app_setting_set --app=$app --key=db_uri --value=$db_uri
+
+
+#=================================================
+# CREATE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating a data directory..." --time --weight=1
+
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
+mkdir -p $datadir
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:www-data "$datadir"
 
 #=================================================
 # NGINX CONFIGURATION
