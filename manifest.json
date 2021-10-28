@@ -69,6 +69,14 @@
                 }
             },
             {
+                "name": "git_branch",
+                "ask": {
+                  "en": "Custom app git repository branch",
+                  "fr": "branche du répertoire git de l'app personnalisée"
+                },
+                "default": "master"
+            },
+            {
                 "name": "admin_route",
                 "type": "path",
                 "ask": {

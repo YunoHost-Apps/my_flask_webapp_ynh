@@ -29,6 +29,7 @@ path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 git_url=$YNH_APP_ARG_GIT_URL
+git_branch=$YNH_APP_ARG_GIT_BRANCH
 admin_route=$YNH_APP_ARG_ADMIN_ROUTE
 
 app=$YNH_APP_INSTANCE_NAME
@@ -58,6 +59,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=secret_key --value=$secret_key
 ynh_app_setting_set --app=$app --key=git_url --value=$git_url
+ynh_app_setting_set --app=$app --key=git_url --value=$git_branch
 ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 
 #=================================================
@@ -65,7 +67,8 @@ ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 #=================================================
 ynh_script_progression --message="Cloning the custom app repository..." --time --weight=1
 
-git clone -q --depth 1 "$git_url" "$final_path"
+git clone -q --depth 1 --single-branch --branch "$git_branch" "$git_url" "$final_path" \
+    || ynh_die --message="Couldn't clone the specified git repository with url '$git_url' and branch '$git_branch'."
 
 #=================================================
 # RETRIEVE AND STORE ARGUMENTS FROM THE APP yunohost/config.json
@@ -79,20 +82,6 @@ migrations=$(get_set_json_setting migrations 0)
 js_path=$(get_set_json_setting js_path null)
 workers=$(get_set_json_setting workers 3)
 client_max_body_size=$(get_set_json_setting client_max_body_size "30M")
-
-#=================================================
-# CREATE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Creating a data directory..." --time --weight=1
-
-datadir=/home/yunohost.app/$app
-ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-
-mkdir -p $datadir
-
-chmod 750 "$datadir"
-chmod -R o-rwx "$datadir"
-chown -R $app:www-data "$datadir"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -118,6 +107,20 @@ ynh_script_progression --message="Configuring system user..." --time --weight=1
 
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
+# CREATE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating a data directory..." --time --weight=1
+
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
+mkdir -p $datadir
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:www-data "$datadir"
 
 #=================================================
 # CREATE A DATABASE
