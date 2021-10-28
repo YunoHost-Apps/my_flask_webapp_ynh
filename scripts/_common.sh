@@ -13,7 +13,7 @@ sqlite_dependencies="sqlite3"
 # PERSONAL HELPERS
 #=================================================
 ynh_get_arg () {
-    arg=$(ynh_read_manifest "$final_path/ynh.json" $1)
+    arg=$(ynh_read_manifest "$final_path/yunohost/config.json" $1)
     [[ "$arg" == "null" ]] && echo $2 || echo $arg
 }
 
