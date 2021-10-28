@@ -68,25 +68,17 @@ ynh_script_progression --message="Cloning the custom app repository..." --time -
 git clone -q --depth 1 "$git_url" "$final_path"
 
 #=================================================
-# RETRIEVE AND STORE ARGUMENTS FROM THE REPO ynh.json
+# RETRIEVE AND STORE ARGUMENTS FROM THE APP yunohost/config.json
 #=================================================
 ynh_script_progression --message="Retrieving and storing the custom app repository settings..." --time --weight=1
 
-flask_path=$(ynh_get_arg flask_path "app")
-config_path=$(ynh_get_arg config_path "app.config.ProdConfig")
-db_type=$(ynh_get_arg db_type null)
-migrations=$(ynh_get_arg migrations 0)
-js_path=$(ynh_get_arg js_path null)
-workers=$(ynh_get_arg workers 3)
-client_max_body_size=$(ynh_get_arg client_max_body_size "30M")
-
-ynh_app_setting_set --app=$app --key=flask_path --value=$flask_path
-ynh_app_setting_set --app=$app --key=config_path --value=$config_path
-ynh_app_setting_set --app=$app --key=db_type --value=$db_type
-ynh_app_setting_set --app=$app --key=migrations --value=$migrations
-ynh_app_setting_set --app=$app --key=js_path --value=$js_path
-ynh_app_setting_set --app=$app --key=workers --value=$workers
-ynh_app_setting_set --app=$app --key=client_max_body_size --value=$client_max_body_size
+flask_path=$(get_set_json_setting flask_path "app")
+config_path=$(get_set_json_setting config_path "app.config.ProdConfig")
+db_type=$(get_set_json_setting db_type null)
+migrations=$(get_set_json_setting migrations 0)
+js_path=$(get_set_json_setting js_path null)
+workers=$(get_set_json_setting workers 3)
+client_max_body_size=$(get_set_json_setting client_max_body_size "30M")
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -103,15 +95,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --time --weight=1
 
-if [ $db_type == "postgresql" ]; then
-  extra_dependencies=$postgresql_dependencies
-elif [ $db_type == "sqlite" ]; then
-  extra_dependencies=$sqlite_dependencies
-else
-  extra_dependencies=""
-fi
-
-ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
+install_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
@@ -182,14 +166,7 @@ chown -R $app:www-data "$final_path"
 
 ynh_exec_as $app python3 -m venv "${final_path}/venv"
 
-exec_from_venv pip install --upgrade pip
-exec_from_venv pip install -r "$final_path/requirements.txt"
-
-if [ $db_type = "postgresql" ]; then
-  exec_from_venv pip install psycopg2
-fi
-# FIXME there is a bug with eventlet > 0.30.2 currently
-exec_from_venv pip install gunicorn eventlet==0.30.2
+install_pip_dependencies
 
 #=================================================
 # ADD A ENV FILE

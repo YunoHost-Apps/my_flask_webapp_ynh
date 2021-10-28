@@ -101,15 +101,14 @@ add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
 
-if [ $db_type == "postgresql" ]; then
-  extra_dependencies=$postgresql_dependencies
-elif [ $db_type == "sqlite" ]; then
-  extra_dependencies=$sqlite_dependencies
-else
-  extra_dependencies=""
-fi
+install_dependencies
 
-ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
+#=================================================
+# UPGRADE PIP DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Upgrading python dependencies..." --time --weight=1
+
+install_pip_dependencies
 
 #=================================================
 # UPDATE THE ENV FILE

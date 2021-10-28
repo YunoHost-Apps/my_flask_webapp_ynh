@@ -12,11 +12,6 @@ sqlite_dependencies="sqlite3"
 #=================================================
 # PERSONAL HELPERS
 #=================================================
-ynh_get_arg () {
-    arg=$(ynh_read_manifest "$final_path/yunohost/config.json" $1)
-    [[ "$arg" == "null" ]] && echo $2 || echo $arg
-}
-
 get_default_workers () {
     python3 -c "import multiprocessing; print(multiprocessing.cpu_count() * 2 + 1)"
 }
@@ -55,6 +50,19 @@ service_action () {
   ynh_systemd_action --service_name=$app --action=$1 --log_path="/var/log/$app/$app.log"
 }
 
+get_json_setting () {
+    arg=$(ynh_read_manifest "$final_path/yunohost/config.json" $1)
+    [[ "$arg" == "null" ]] && echo $2 || echo $arg
+}
+
+get_set_json_setting () {
+    local key=$1
+    local default_value=$2
+    local value=$(get_json_setting $key $default_value)
+    ynh_app_setting_set --app=$app --key=$key --value=$value
+    echo $value
+}
+
 exec_from_venv () {
     ynh_exec_as $app "$final_path/venv/bin/$@"
 }
@@ -63,6 +71,28 @@ exec_flask () {
   pushd $final_path
   ynh_exec_as $app "venv/bin/flask" $@
   popd
+}
+
+install_dependencies () {
+  extra_dependencies=""
+  if [ $db_type == "postgresql" ]; then
+    extra_dependencies=$postgresql_dependencies
+  elif [ $db_type == "sqlite" ]; then
+    extra_dependencies=$sqlite_dependencies
+  fi
+
+  ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
+}
+
+install_pip_dependencies () {
+  exec_from_venv pip install --upgrade pip
+  exec_from_venv pip install -r "$final_path/requirements.txt"
+
+  if [ $db_type = "postgresql" ]; then
+    exec_from_venv pip install psycopg2
+  fi
+  # FIXME there is a bug with eventlet > 0.30.2 currently
+  exec_from_venv pip install gunicorn eventlet==0.30.2
 }
 
 #=================================================
