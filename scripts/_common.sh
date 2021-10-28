@@ -55,6 +55,10 @@ service_action () {
   ynh_systemd_action --service_name=$app --action=$1 --log_path="/var/log/$app/$app.log"
 }
 
+exec_from_venv () {
+    ynh_exec_as $app "$final_path/venv/bin/$@"
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================
