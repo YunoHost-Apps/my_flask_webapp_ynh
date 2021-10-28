@@ -59,6 +59,12 @@ exec_from_venv () {
     ynh_exec_as $app "$final_path/venv/bin/$@"
 }
 
+exec_flask () {
+  pushd $final_path
+  ynh_exec_as $app "venv/bin/flask" $@
+  popd
+}
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================
