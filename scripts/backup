@@ -15,8 +15,8 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	true
+  	### Remove this function if there's nothing to clean before calling the remove script.
+  	true
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -92,12 +92,12 @@ ynh_backup --src_path="/var/log/$app"
 #=================================================
 # BACKUP THE PostgreSQL DATABASE
 #=================================================
-if [ $db_type = "postgresql" ]; then
-  ynh_print_info --message="Backing up the PostgreSQL database..."
+if [[ $db_type = "postgresql" ]]; then
+    ynh_print_info --message="Backing up the PostgreSQL database..."
 
-  ### (However, things like MySQL dumps *do* take some time to run, though the
-  ### copy of the generated dump to the archive still happens later)
-  ynh_psql_dump_db --database="$db_name" > db.sql
+    ### (However, things like MySQL dumps *do* take some time to run, though the
+    ### copy of the generated dump to the archive still happens later)
+    ynh_psql_dump_db --database="$db_name" > db.sql
 fi
 
 #=================================================

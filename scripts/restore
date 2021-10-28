@@ -15,8 +15,8 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	#### Remove this function if there's nothing to clean before calling the remove script.
-	true
+  	#### Remove this function if there's nothing to clean before calling the remove script.
+  	true
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -41,8 +41,7 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..." --time --weight=1
 
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
+test ! -d $final_path || ynh_die --message="There is already a directory: $final_path"
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -113,12 +112,12 @@ install_pip_dependencies
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
-if [ $db_type == "postgresql" ]; then
-  ynh_script_progression --message="Restoring the MySQL database..." --time --weight=1
+if [[ $db_type == "postgresql" ]]; then
+    ynh_script_progression --message="Restoring the MySQL database..." --time --weight=1
 
-  db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-  ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
-  ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+    db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+    ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+    ynh_psql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
 fi
 # sqlite db is already restored since it is saved in $final_path/instance
 

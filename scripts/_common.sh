@@ -47,7 +47,7 @@ add_nginx_config () {
 }
 
 service_action () {
-  ynh_systemd_action --service_name=$app --action=$1 --log_path="/var/log/$app/$app.log"
+    ynh_systemd_action --service_name=$app --action=$1 --log_path="/var/log/$app/$app.log"
 }
 
 get_json_setting () {
@@ -68,31 +68,31 @@ exec_from_venv () {
 }
 
 exec_flask () {
-  pushd $final_path
-  ynh_exec_as $app "venv/bin/flask" $@
-  popd
+    pushd $final_path
+    ynh_exec_as $app "venv/bin/flask" $@
+    popd
 }
 
 install_dependencies () {
-  extra_dependencies=""
-  if [ $db_type == "postgresql" ]; then
-    extra_dependencies=$postgresql_dependencies
-  elif [ $db_type == "sqlite" ]; then
-    extra_dependencies=$sqlite_dependencies
-  fi
+    extra_dependencies=""
+    if [[ $db_type == "postgresql" ]]; then
+        extra_dependencies=$postgresql_dependencies
+    elif [[ $db_type == "sqlite" ]]; then
+        extra_dependencies=$sqlite_dependencies
+    fi
 
-  ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
+    ynh_install_app_dependencies $pkg_dependencies $extra_dependencies
 }
 
 install_pip_dependencies () {
-  exec_from_venv pip install --upgrade pip
-  exec_from_venv pip install -r "$final_path/requirements.txt"
+    exec_from_venv pip install --upgrade pip
+    exec_from_venv pip install -r "$final_path/requirements.txt"
 
-  if [ $db_type = "postgresql" ]; then
-    exec_from_venv pip install psycopg2
-  fi
-  # FIXME there is a bug with eventlet > 0.30.2 currently
-  exec_from_venv pip install gunicorn eventlet==0.30.2
+    if [[ $db_type = "postgresql" ]]; then
+      exec_from_venv pip install psycopg2
+    fi
+    # FIXME there is a bug with eventlet > 0.30.2 currently
+    exec_from_venv pip install gunicorn eventlet==0.30.2
 }
 
 #=================================================
