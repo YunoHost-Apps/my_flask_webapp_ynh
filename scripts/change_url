@@ -26,7 +26,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
-# Needed for helper "ynh_add_nginx_config"
+# Needed for helper "add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 client_max_body_size=$(ynh_app_setting_get --app=$app --key=client_max_body_size)
 port=$(ynh_app_setting_get --app=$app --key=port)
@@ -91,7 +91,7 @@ then
 	domain="$old_domain"
 	path_url="$new_path"
 	# Create a dedicated NGINX config
-	ynh_add_nginx_config
+	add_nginx_config
   # Recreate gunicorn conf with new path
   add_gunicorn_config
 fi

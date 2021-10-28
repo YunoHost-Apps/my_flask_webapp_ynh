@@ -28,10 +28,27 @@ add_env_config () {
 }
 
 add_gunicorn_config () {
-    script_name=$([ $path_url == "/" ] && echo "" || echo $path_url)
+    local script_name=$([[ $path_url == "/" ]] && echo "" || echo $path_url)
     ynh_add_config --template="gunicorn.conf.py" --destination="$final_path/gunicorn.conf.py"
     chmod 400 "$final_path/gunicorn.conf.py"
     chown $app:$app "$final_path/gunicorn.conf.py"
+}
+
+# equivalent of `ynh_add_nginx_config` with check if custom config in app repo
+add_nginx_config () {
+    local finalnginxconf="/etc/nginx/conf.d/$domain.d/$app.conf"
+    local inputnginxconf=$([[ -f "$final_path/yunohost/nginx.conf" ]] && echo "$final_path/yunohost/nginx.conf" || echo "$YNH_APP_BASEDIR/conf/nginx.conf")
+
+    if [ "${path_url:-}" != "/" ]; then
+        ynh_replace_string --match_string="^#sub_path_only" --replace_string="" --target_file="$inputnginxconf"
+    else
+        ynh_replace_string --match_string="^#root_path_only" --replace_string="" --target_file="$inputnginxconf"
+    fi
+
+
+    ynh_add_config --template="$inputnginxconf" --destination="$finalnginxconf"
+
+    # ynh_systemd_action --service_name=nginx --action=reload
 }
 
 service_action () {

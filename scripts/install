@@ -168,7 +168,7 @@ chown -R $app:www-data "$datadir"
 ynh_script_progression --message="Configuring NGINX web server..." --time --weight=1
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+add_nginx_config
 
 #=================================================
 # PIP INSTALLATION

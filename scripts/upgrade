@@ -94,7 +94,7 @@ chown -R $app:www-data "$final_path"
 ynh_script_progression --message="Upgrading NGINX web server configuration..." --time --weight=1
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+add_nginx_config
 
 #=================================================
 # UPGRADE DEPENDENCIES
