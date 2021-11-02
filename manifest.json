@@ -41,10 +41,6 @@
                 "default": "/flaskapp"
             },
             {
-                "name": "admin",
-                "type": "user"
-            },
-            {
                 "name": "is_public",
                 "type": "boolean",
                 "default": true
@@ -77,17 +73,34 @@
                 "default": "master"
             },
             {
+                "name": "permission",
+                "type": "boolean",
+                "default": true,
+                "ask": {
+                  "en": "Create an admin permission for this app",
+                  "fr": "Créer une permission admin pour cette app"
+                }
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "visible": "permission == true"
+            },
+            {
+                "default": "",
                 "name": "admin_route",
                 "type": "path",
+                "visible": "permission == true",
                 "ask": {
                   "en": "Add an sso protected route",
-                  "fr": "Définir une route protégée par le sso."
+                  "fr": "Définir une route protégée par le sso"
                 },
                 "example": "/myadmin",
                 "help": {
                   "en": "Consider using a less common route than `/admin`.",
                   "fr": "Préférez utiliser une route moins commune que `/admin`"
-                }
+                },
+                "optional": true
             }
         ]
     }

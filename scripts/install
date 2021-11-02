@@ -26,11 +26,12 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 git_url=$YNH_APP_ARG_GIT_URL
 git_branch=$YNH_APP_ARG_GIT_BRANCH
-admin_route=$YNH_APP_ARG_ADMIN_ROUTE
+permission=$YNH_APP_ARG_PERMISSION
+admin_route=${YNH_APP_ARG_ADMIN_ROUTE:-}
+admin=${YNH_APP_ARG_ADMIN:-}
 
 app=$YNH_APP_INSTANCE_NAME
 secret_key=$(ynh_string_random)
@@ -61,6 +62,7 @@ ynh_app_setting_set --app=$app --key=secret_key --value=$secret_key
 ynh_app_setting_set --app=$app --key=git_url --value=$git_url
 ynh_app_setting_set --app=$app --key=git_url --value=$git_branch
 ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
+ynh_app_setting_set --app=$app --key=permission --value=$permission
 
 #=================================================
 # CLONE APP REPOSITORY SOURCES
@@ -250,8 +252,13 @@ fi
 ### does have for example an admin interface or an API.
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
-ynh_permission_create --permission="admin" --url="/$admin_route" --allowed=$admin
-
+if [[ $permission -eq 1 ]]; then
+    if [[ -n "$admin_route" ]]; then
+        ynh_permission_create --permission="admin" --url="/$admin_route" --allowed=$admin
+    else
+      ynh_permission_create --permission="admin" --allowed=$admin
+    fi
+fi
 
 #=================================================
 # RELOAD NGINX
