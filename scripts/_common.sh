@@ -69,7 +69,8 @@ exec_from_venv () {
 
 exec_flask () {
     pushd $final_path
-    ynh_exec_as $app "venv/bin/flask" $@
+    export FLASK_APP="$flask_path:create_app('$config_path', '$datadir')"
+    sudo -u $app --preserve-env=FLASK_APP venv/bin/flask $@
     popd
 }
 
