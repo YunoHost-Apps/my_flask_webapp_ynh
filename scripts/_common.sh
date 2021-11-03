@@ -31,19 +31,11 @@ add_gunicorn_config () {
 
 # equivalent of `ynh_add_nginx_config` with check if custom config in app repo
 add_nginx_config () {
-    local finalnginxconf="/etc/nginx/conf.d/$domain.d/$app.conf"
-    local inputnginxconf=$([[ -f "$final_path/yunohost/nginx.conf" ]] && echo "$final_path/yunohost/nginx.conf" || echo "$YNH_APP_BASEDIR/conf/nginx.conf")
-
-    if [ "${path_url:-}" != "/" ]; then
-        ynh_replace_string --match_string="^#sub_path_only" --replace_string="" --target_file="$inputnginxconf"
-    else
-        ynh_replace_string --match_string="^#root_path_only" --replace_string="" --target_file="$inputnginxconf"
+    if [[ -f "$final_path/yunohost/nginx.conf" ]]; then
+      cp "$final_path/yunohost/nginx.conf" "$YNH_APP_BASEDIR/conf/nginx.conf"
     fi
 
-
-    ynh_add_config --template="$inputnginxconf" --destination="$finalnginxconf"
-
-    # ynh_systemd_action --service_name=nginx --action=reload
+    ynh_add_nginx_config
 }
 
 service_action () {
