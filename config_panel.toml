@@ -28,3 +28,46 @@ name = "Base config"
         # bind = ":/etc/nginx/conf.d/__DOMAIN__.d/__APP__.conf"
         ask.en = "Set the nginx `client_max_body_size`"
         ask.fr = "Définir le `client_max_body_size` pour nginx"
+
+[actions]
+name = "Actions"
+
+    [actions.update]
+    name = "Update the repo"
+    services = ["__APP__"]
+
+        [actions.update.warning]
+        type = "alert"
+        style = "warning"
+        ask.en = "If you want to run some commands, you need to first check what you want to do without checking the `trigger actions` and save, then you can check the `trigger actions` and save again to actually trigger those."
+        ask.fr = "Si vous souhaitez lancer des commandes, vous devez d'abord cocher les actions souhaitées sans cocher l'action `déclencher les actions` et sauvegarder, ensuite vous pouvez cocher cette dernière et sauvegarder de nouveau pour déclencher les actions sauvegardées."
+
+        [actions.update.run_pull]
+        type = "boolean"
+        ask.en = "Update sources (`git pull`)"
+        ask.fr = "Mettre à jour les sources (`git pull`)"
+
+        [actions.update.run_pip]
+        type = "boolean"
+        ask.en = "Upgrade python dependencies (`pip install`)"
+        ask.fr = "Installer les dépendances python (`pip install`)"
+
+        [actions.update.run_npm]
+        type = "boolean"
+        ask.en = "Upgrade js dependencies (`npm ci`)"
+        ask.fr = "Installer les dépendances js (`npm ci`)"
+
+        [actions.update.run_build]
+        type = "boolean"
+        ask.en = "Run a js build (`npm run build`)"
+        ask.fr = "Lancer un build du js (`npm run build`)"
+
+        [actions.update.run_migrations]
+        type = "boolean"
+        ask.en = "Run the database migration (`flask db upgrade`)"
+        ask.fr = "Lancer la migration de la base de données (`flask db upgrade`)"
+
+        [actions.update.run]
+        type = "boolean"
+        ask.en = "Check this box to trigger the checked and saved actions"
+        ask.fr = "Cocher cette case pour déclencher les actions cochées et sauvegardées"

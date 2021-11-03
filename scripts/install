@@ -65,6 +65,18 @@ ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 ynh_app_setting_set --app=$app --key=permission --value=$permission
 
 #=================================================
+# SET DEFAULT VALUES FOR CONFIG PANEL
+#=================================================
+ynh_script_progression --message="Storing default config panel settings..." --time --weight=1
+
+ynh_app_setting_set --app=$app --key=run_pull --value=0
+ynh_app_setting_set --app=$app --key=run_pip --value=0
+ynh_app_setting_set --app=$app --key=run_npm --value=0
+ynh_app_setting_set --app=$app --key=run_build --value=0
+ynh_app_setting_set --app=$app --key=run_migrations --value=0
+ynh_app_setting_set --app=$app --key=run --value=0
+
+#=================================================
 # CLONE APP REPOSITORY SOURCES
 #=================================================
 ynh_script_progression --message="Cloning the custom app repository..." --time --weight=1

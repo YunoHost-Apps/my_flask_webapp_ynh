@@ -16,11 +16,65 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS
 #=================================================
 
-final_path=$(ynh_app_setting_get $app final_path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+flask_path=$(ynh_app_setting_get --app=$app --key=flask_path)
+js_path=$(ynh_app_setting_get --app=$app --key=js_path)
+config_path=$(ynh_app_setting_get --app=$app --key=config_path)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+git_branch=$(ynh_app_setting_get --app=$app --key=git_branch)
+db_type=$(ynh_app_setting_get --app=$app --key=db_type)
+client_max_body_size=$(ynh_app_setting_get --app=$app --key=client_max_body_size)
 
 #=================================================
 # CUSTOM SETTERS
 #=================================================
+set__run () {
+    run_pull=$(ynh_app_setting_get --app=$app --key=run_pull)
+    run_pip=$(ynh_app_setting_get --app=$app --key=run_pip)
+    run_npm=$(ynh_app_setting_get --app=$app --key=run_npm)
+    run_build=$(ynh_app_setting_get --app=$app --key=run_build)
+    run_migrations=$(ynh_app_setting_get --app=$app --key=run_migrations)
+
+    ynh_print_info --message="CUSTOM SETTER pull=$run_pull pip=$run_pip npm=$run_npm build=$run_build migr=$run_migrations"
+
+    if [[ $run_pull -eq 1 ]]; then
+        ynh_print_info --message="Run git pull $git_branch"
+
+        pushd $final_path
+        abort_if_git_changes
+        git pull origin "$git_branch" --allow-unrelated-histories --depth=1 --strategy-option=theirs
+        popd
+    fi
+
+    if [[ $run_pip -eq 1 ]]; then
+        ynh_print_info --message="Run pip install"
+
+        install_pip_dependencies
+    fi
+
+    if [[ $js_path != "null" ]]; then
+        if [[ $run_npm -eq 1 ]]; then
+          ynh_print_info --message="Run npm install"
+
+          exec_npm ci
+        fi
+
+        if [[ $run_build -eq 1 ]]; then
+          ynh_print_info --message="Run npm build"
+
+          exec_npm run build
+        fi
+    fi
+
+    if [[ $run_migrations -eq 1 ]]; then
+        ynh_print_info --message="Run flask db upgrade"
+
+        exec_flask db upgrade
+    fi
+
+    # reset `run` boolean for next use
+    ynh_app_setting_set --app=$app --key=run --value=0
+}
 
 set__admin_route () {
     ynh_permission_url --permission="admin" --url="$admin_route"
@@ -32,6 +86,7 @@ set__client_max_body_size () {
     ynh_update_config_var --file="/etc/nginx/conf.d/$domain.d/$app.conf" --key=client_max_body_size --value="$client_max_body_size"
     ynh_app_setting_set --app=$app --key=client_max_body_size --value="$client_max_body_size"
 }
+
 
 #=================================================
 # GENERIC FINALIZATION

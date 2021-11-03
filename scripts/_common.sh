@@ -59,6 +59,16 @@ exec_from_venv () {
     ynh_exec_as $app "$final_path/venv/bin/$@"
 }
 
+abort_if_git_changes () {
+    # taken from https://stackoverflow.com/a/64776607
+    if ! (git diff --exit-code origin/$git_branch..$git_branch > /dev/null) \
+        || ! (git diff --exit-code $git_branch > /dev/null) \
+        || ! [[ -z "$(git status --porcelain)" ]]
+    then
+        ynh_die --message="Your local app repo has some changes that aren't pushed to origin/$git_branch."
+    fi
+}
+
 exec_flask () {
     pushd $final_path
     export FLASK_APP="$flask_path:create_app('$config_path', '$datadir')"
