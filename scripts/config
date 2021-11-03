@@ -28,6 +28,11 @@ set__admin_route () {
     ynh_app_setting_set --app=$app --key=admin_route --value="$admin_route"
 }
 
+set__client_max_body_size () {
+    ynh_update_config_var --file="/etc/nginx/conf.d/$domain.d/$app.conf" --key=client_max_body_size --value="$client_max_body_size"
+    ynh_app_setting_set --app=$app --key=client_max_body_size --value="$client_max_body_size"
+}
+
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
