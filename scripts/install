@@ -60,7 +60,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=secret_key --value=$secret_key
 ynh_app_setting_set --app=$app --key=git_url --value=$git_url
-ynh_app_setting_set --app=$app --key=git_url --value=$git_branch
+ynh_app_setting_set --app=$app --key=git_branch --value=$git_branch
 ynh_app_setting_set --app=$app --key=admin_route --value=$admin_route
 ynh_app_setting_set --app=$app --key=permission --value=$permission
 
