@@ -66,6 +66,12 @@ exec_flask () {
     popd
 }
 
+exec_npm () {
+    pushd "$final_path/$js_path"
+    ynh_exec_as $app npm $@
+    popd
+}
+
 install_dependencies () {
     extra_dependencies=""
     if [[ $db_type == "postgresql" ]]; then

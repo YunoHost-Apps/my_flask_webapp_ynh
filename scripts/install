@@ -181,6 +181,16 @@ ynh_script_progression --message="Adding a .env file..." --time --weight=1
 add_env_config
 
 #=================================================
+# JS DEPENDENCIES INSTALLATION
+#=================================================
+if [[ $js_path != "null" ]]; then
+    ynh_script_progression --message="Installing and building js..." --time --weight=1
+
+    exec_npm ci
+    exec_npm run build
+fi
+
+#=================================================
 # ADD A GUNICORN CONFIG FILE
 #=================================================
 ynh_script_progression --message="Adding a Gunicorn config file..." --time --weight=1
