@@ -81,7 +81,7 @@ ynh_app_setting_set --app=$app --key=run --value=0
 #=================================================
 ynh_script_progression --message="Cloning the custom app repository..." --time --weight=1
 
-git clone -q --depth 1 --single-branch --branch "$git_branch" "$git_url" "$final_path" \
+git clone -q --single-branch --branch "$git_branch" "$git_url" "$final_path" \
     || ynh_die --message="Couldn't clone the specified git repository with url '$git_url' and branch '$git_branch'."
 
 #=================================================

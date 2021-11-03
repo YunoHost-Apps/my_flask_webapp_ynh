@@ -42,7 +42,7 @@ set__run () {
 
         pushd $final_path
         abort_if_git_changes
-        git pull origin "$git_branch" --allow-unrelated-histories --depth=1 --strategy-option=theirs
+        git pull origin "$git_branch" --ff-only
         popd
     fi
 
