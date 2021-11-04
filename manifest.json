@@ -1,28 +1,20 @@
 {
-    "name": "Flask Git",
-    "id": "flask_git",
+    "name": "My Flask Webapp",
+    "id": "my_flask_webapp",
     "packaging_format": 1,
     "description": {
-        "en": "Easily install and manage a Flask app from a git repository.",
-        "fr": "Installez et gérez facilement une app Flask depuis un répertoire git."
+        "en": "Install and manage a Flask app from a git repository.",
+        "fr": "Installez et gérez une app Flask depuis un répertoire git."
     },
     "version": "0.1~ynh1",
-    "url": "https://example.com",
-    "upstream": {
-        "license": "free",
-        "website": "https://example.com",
-        "demo": "https://demo.example.com",
-        "admindoc": "https://yunohost.org/packaging_apps",
-        "userdoc": "https://yunohost.org/apps",
-        "code": "https://some.forge.com/example/example"
-    },
-    "license": "free",
+    "url": "https://github.com/YunoHost-Apps/my_flask_webapp_ynh",
+    "license": "AGPL-3.0",
     "maintainer": {
-        "name": "John doe",
-        "email": "john.doe@example.com"
+        "name": "axolotle",
+        "email": "contact@autre.space"
     },
     "requirements": {
-        "yunohost": ">= 4.1.3"
+        "yunohost": ">= 4.3.0"
     },
     "multi_instance": true,
     "services": [
@@ -48,27 +40,24 @@
             {
                 "name": "git_url",
                 "ask": {
-                  "en": "Custom app git repository URL",
-                  "fr": "URL du répertoire git de l'app personnalisée"
+                    "en": "Custom app git repository URL",
+                    "fr": "URL du répertoire git de l'app personnalisée"
                 },
                 "example": "https://domain.tld/path/to/app",
                 "pattern": {
                   "regexp": "^https:\\/\\/[a-zA-Z0-9-_.]+\\/[a-zA-Z0-9-_./]+\\/[a-zA-Z0-9-_.]+(\\/?(-\\/)?tree\\/[a-zA-Z0-9-_]+)?(\\.git)?\\/?$",
-                  "error": {
-                    "en": "App repository URLs are expected to look like <code>https://domain.tld/path/to/app</code>",
-                    "fr": "Les URL de répertoire git doivent ressembler à <code>https://domaine.tld/chemin/vers/app</code>"
-                  }
+                  "error": "App repository URLs are expected to look like <code>https://domain.tld/path/to/app</code>"
                 },
                 "help": {
-                  "en": "Must be a valid git repository.",
-                  "fr": "Doit être un lien valide vers un répertoire git."
+                    "en": "Must be a valid git repository.",
+                    "fr": "Doit être un lien valide vers un répertoire git."
                 }
             },
             {
                 "name": "git_branch",
                 "ask": {
-                  "en": "Custom app git repository branch",
-                  "fr": "branche du répertoire git de l'app personnalisée"
+                    "en": "Custom app git repository branch",
+                    "fr": "branche du répertoire git de l'app personnalisée"
                 },
                 "default": "master"
             },
@@ -77,8 +66,8 @@
                 "type": "boolean",
                 "default": true,
                 "ask": {
-                  "en": "Create an admin permission for this app",
-                  "fr": "Créer une permission admin pour cette app"
+                    "en": "Create an admin permission for this app",
+                    "fr": "Créer une permission admin pour cette app"
                 }
             },
             {
@@ -92,13 +81,13 @@
                 "type": "path",
                 "visible": "permission == true",
                 "ask": {
-                  "en": "Add an sso protected route",
-                  "fr": "Définir une route protégée par le sso"
+                    "en": "Add an sso protected route",
+                    "fr": "Définir une route protégée par le sso"
                 },
                 "example": "/myadmin",
                 "help": {
-                  "en": "Consider using a less common route than `/admin`.",
-                  "fr": "Préférez utiliser une route moins commune que `/admin`"
+                    "en": "Consider using a less common route than `/admin`.",
+                    "fr": "Préférez utiliser une route moins commune que `/admin`"
                 },
                 "optional": true
             }
